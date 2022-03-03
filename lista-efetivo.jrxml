@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lista-efetivo" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="48a85b1a-74b7-48f5-a740-892689a7f3b8">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="controle-efetivo"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -225,13 +225,16 @@
 			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 		</parameter>
 		<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
+		<parameter name="param" class="java.util.Collection"/>
 		<queryString language="SQL">
 			<![CDATA[select p.sg_posto, p.sg_quadro, p.sg_especialidade, count(p.sg_posto) as quantidade
 from vw_pessoas_todas p
 where
+
       p.cd_om =  $P{ORGANIZACAO_ID}  and
       p.ttc = $P{TIPO_EFETIVO}   and
-      p.sg_quadro ~ '(QO|QCO)'
+     Regexp_Like (p.sg_quadro, 'QO|QCO') and
+     $X{IN, p.SG_SITUACAO, param }
 group by p.sg_posto, p.sg_quadro, p.sg_especialidade, p.nr_posto
 order by p.nr_posto]]>
 		</queryString>
@@ -268,6 +271,7 @@ order by p.nr_posto]]>
 			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 		</parameter>
 		<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
+		<parameter name="param" class="java.util.Collection"/>
 		<queryString language="SQL">
 			<![CDATA[SELECT p.sg_posto,
 	p.sg_quadro,
@@ -277,7 +281,8 @@ FROM vw_pessoas_todas p
 where
   p.cd_om =   $P{ORGANIZACAO_ID} 
   and p.ttc =  $P{TIPO_EFETIVO}  AND
-p.sg_quadro IN ('QSS','QESA','QSCON','QTA')
+p.sg_quadro IN ('QSS','QESA','QSCON','QTA') and
+     $X{IN, p.SG_SITUACAO, param }
 GROUP BY p.sg_posto,
 	p.sg_quadro,
 	p.sg_especialidade,
@@ -317,6 +322,7 @@ ORDER BY p.nr_posto ASC]]>
 			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 		</parameter>
 		<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
+		<parameter name="param" class="java.util.Collection"/>
 		<queryString language="SQL">
 			<![CDATA[SELECT p.sg_posto,
 	p.sg_quadro,
@@ -326,7 +332,8 @@ FROM vw_pessoas_todas p
 WHERE 
    p.cd_om =  $P{ORGANIZACAO_ID} 
   and p.ttc = $P{TIPO_EFETIVO} and
- 	 p.sg_quadro IN ('QCB','QSD')
+ 	 p.sg_quadro IN ('QCB','QSD') and
+     $X{IN, p.SG_SITUACAO, param }
 GROUP BY p.sg_posto,
 	p.sg_quadro,
 	p.sg_especialidade,
@@ -366,44 +373,16 @@ ORDER BY p.nr_posto ASC]]>
 			<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 		</parameter>
 		<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
+		<parameter name="param" class="java.util.Collection"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT p.posto_grad_nome_guerra,
-	p.sg_posto,
-	p.sg_quadro,
-	p.sg_especialidade,
-	count( p) AS quantidade
+			<![CDATA[SELECT 
+count(p.NR_ORDEM) AS quantidade
 FROM vw_pessoas_todas p
 WHERE 
 	 p.sg_situacao = 'CVL' 
 	 AND p.cd_om = $P{ORGANIZACAO_ID} 
-	 AND p.ttc = $P{TIPO_EFETIVO} 
-GROUP BY p.posto_grad_nome_guerra,
-	p.sg_posto,
-	p.sg_quadro,
-	p.sg_especialidade,
-	p.nr_posto
-ORDER BY p.nr_posto DESC]]>
+	 AND p.ttc = $P{TIPO_EFETIVO} ]]>
 		</queryString>
-		<field name="posto_grad_nome_guerra" class="java.lang.String">
-			<property name="com.jaspersoft.studio.field.name" value="posto_grad_nome_guerra"/>
-			<property name="com.jaspersoft.studio.field.label" value="posto_grad_nome_guerra"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="vw_pessoas_todas"/>
-		</field>
-		<field name="sg_posto" class="java.lang.String">
-			<property name="com.jaspersoft.studio.field.name" value="sg_posto"/>
-			<property name="com.jaspersoft.studio.field.label" value="sg_posto"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="vw_pessoas_todas"/>
-		</field>
-		<field name="sg_quadro" class="java.lang.String">
-			<property name="com.jaspersoft.studio.field.name" value="sg_quadro"/>
-			<property name="com.jaspersoft.studio.field.label" value="sg_quadro"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="vw_pessoas_todas"/>
-		</field>
-		<field name="sg_especialidade" class="java.lang.String">
-			<property name="com.jaspersoft.studio.field.name" value="sg_especialidade"/>
-			<property name="com.jaspersoft.studio.field.label" value="sg_especialidade"/>
-			<property name="com.jaspersoft.studio.field.tree.path" value="vw_pessoas_todas"/>
-		</field>
 		<field name="quantidade" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.name" value="quantidade"/>
 			<property name="com.jaspersoft.studio.field.label" value="quantidade"/>
@@ -419,6 +398,7 @@ ORDER BY p.nr_posto DESC]]>
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
+	<parameter name="SITUACAO" class="java.util.Collection" nestedType="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT pes.nr_ordem,
 	pes.nr_antiguidade,
@@ -448,7 +428,8 @@ ORDER BY p.nr_posto DESC]]>
 FROM vw_pessoas_todas pes
 WHERE
       pes.cd_om =  $P{ORGANIZACAO_ID}   AND
-      pes.ttc = $P{TIPO_EFETIVO} 
+      pes.ttc = $P{TIPO_EFETIVO} AND
+      $X{IN, PES.SG_SITUACAO , SITUACAO}
 ORDER BY CASE
              WHEN $P{TIPO_EFETIVO}  = 'TTC'
                  THEN (nr_posto)
@@ -595,7 +576,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="18" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["RELAÇÃO DO EFETIVO "+ ($F{ttc}.equals("TTC")? "TTC ": "")+$F{sg_om}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RELAÇÃO DO EFETIVO "+ ($F{ttc}.equals("TTC")? "TTC ":  ($P{SITUACAO}.contains( "ATIVO " ) ? "ATIVO": "CIVIL "  ) )+$F{sg_om}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -758,7 +739,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{sg_posto} !=null ? $F{sg_posto}: "CV") + " "+($F{ttc}.equals("TTC") ? "R/1 " : "") + ($F{sg_especialidade} !=null ? $F{sg_especialidade} : "") + " "+ ($F{sg_quadro} !=null ? $F{sg_quadro} : "") ]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{sg_posto} !=null ? $F{sg_posto}: "CV") + " "+($F{ttc}.equals("TTC") ? "R/1 " : "") + ($F{sg_especialidade} !=null ? $F{sg_especialidade} : "") + " "+ ($F{sg_quadro} !=null ? $F{sg_quadro} : "")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="estilo_corpo" stretchType="ContainerHeight" x="82" y="0" width="180" height="30" uuid="89393cbe-2e6d-421a-8264-d41595ddecc8">
@@ -773,7 +754,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{nomepessoa} + " ("+"<b>"+$F{nomeguerra}+"</b>"+")"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nomepessoa} + " ("+"<b>"+($F{nomeguerra} !=null ? $F{nomeguerra} : "")+"</b>"+")"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="estilo_corpo" stretchType="ContainerHeight" x="262" y="0" width="80" height="30" uuid="0024a47f-a552-4cd0-9ff1-9b515f4d25d8">
@@ -899,7 +880,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="18" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["QUADRO SINÓTICO "+ ($F{ttc}.equals("TTC")? "TTC ": "")+$F{sg_om}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["QUADRO SINÓTICO "+ ($F{ttc}.equals("TTC")? "TTC ":  "" )+$F{sg_om}]]></textFieldExpression>
 			</textField>
 			<break>
 				<reportElement x="0" y="0" width="100" height="1" uuid="ee685cea-d3c6-46bf-9a61-ad5e51aa45f9"/>
@@ -975,12 +956,15 @@ ORDER BY CASE
 					<property name="com.jaspersoft.studio.components.autoresize.next" value="true"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tabela_of" uuid="2137b0af-2635-4450-9f46-ecfd27c913df">
+					<datasetRun subDataset="tabela_of" uuid="731bb1ce-98c0-4aab-999e-4fd8898aa74f">
 						<datasetParameter name="ORGANIZACAO_ID">
 							<datasetParameterExpression><![CDATA[$F{cd_om}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="TIPO_EFETIVO">
 							<datasetParameterExpression><![CDATA[$F{ttc}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param">
+							<datasetParameterExpression><![CDATA[$P{SITUACAO}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
@@ -1064,7 +1048,7 @@ ORDER BY CASE
 				</jr:table>
 			</componentElement>
 			<componentElement>
-				<reportElement x="200" y="163" width="201" height="20" uuid="55834db3-d21b-4563-9e50-bff16f5ba928">
+				<reportElement style="Table_TH" x="200" y="163" width="201" height="30" uuid="55834db3-d21b-4563-9e50-bff16f5ba928">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table 4_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table 4_CH"/>
@@ -1073,12 +1057,15 @@ ORDER BY CASE
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tabela_qss" uuid="1b8ff0e8-1874-4cf1-a1c9-0fc38a4d35b9">
+					<datasetRun subDataset="tabela_qss" uuid="0da583aa-4995-4878-a86e-48d82225499e">
 						<datasetParameter name="ORGANIZACAO_ID">
 							<datasetParameterExpression><![CDATA[$F{cd_om}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="TIPO_EFETIVO">
 							<datasetParameterExpression><![CDATA[$F{ttc}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param">
+							<datasetParameterExpression><![CDATA[$P{SITUACAO}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
@@ -1170,12 +1157,15 @@ ORDER BY CASE
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tabela_prac" uuid="dfffd960-bf44-479e-ab7d-44aeb36c7d47">
+					<datasetRun subDataset="tabela_prac" uuid="3641276a-138e-4b14-b7b7-376a00da9557">
 						<datasetParameter name="ORGANIZACAO_ID">
 							<datasetParameterExpression><![CDATA[$F{cd_om}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="TIPO_EFETIVO">
 							<datasetParameterExpression><![CDATA[$F{ttc}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param">
+							<datasetParameterExpression><![CDATA[$P{SITUACAO}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
@@ -1266,12 +1256,15 @@ ORDER BY CASE
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="tabela_civ" uuid="19805a54-222b-402d-902d-130a03f59330">
+					<datasetRun subDataset="tabela_civ" uuid="23a2ee12-3e30-4483-9ff9-19fc351caeef">
 						<datasetParameter name="ORGANIZACAO_ID">
 							<datasetParameterExpression><![CDATA[$F{cd_om}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="TIPO_EFETIVO">
 							<datasetParameterExpression><![CDATA[$F{ttc}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param">
+							<datasetParameterExpression><![CDATA[$P{SITUACAO}]]></datasetParameterExpression>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
@@ -1309,7 +1302,7 @@ ORDER BY CASE
 								<textElement textAlignment="Left" verticalAlignment="Middle">
 									<font size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[($F{sg_posto} !=null ? $F{sg_posto} : "CV")+ " "+ ($F{sg_especialidade} !=null ? $F{sg_especialidade} : "")]]></textFieldExpression>
+								<textFieldExpression><![CDATA["CV "]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
