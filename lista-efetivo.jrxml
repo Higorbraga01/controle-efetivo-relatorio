@@ -381,7 +381,7 @@ FROM vw_pessoas_todas p
 WHERE 
 	 p.sg_situacao = 'CVL' 
 	 AND p.cd_om = $P{ORGANIZACAO_ID} 
-	 AND p.ttc = $P{TIPO_EFETIVO} ]]>
+	 AND p.ttc = $P{TIPO_EFETIVO}]]>
 		</queryString>
 		<field name="quantidade" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.name" value="quantidade"/>
@@ -576,7 +576,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="18" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["RELAÇÃO DO EFETIVO "+ ($F{ttc}.equals("TTC")? "TTC ":  ($P{SITUACAO}.contains( "ATIVO " ) ? "ATIVO": "CIVIL "  ) )+$F{sg_om}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RELAÇÃO DO EFETIVO "+ ($F{ttc}.equals("TTC")? "TTC ":  ($P{SITUACAO}.contains( "ATIVO" ) ? "ATIVO ": "CIVIL "  ) )+$F{sg_om}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
