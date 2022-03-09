@@ -399,6 +399,9 @@ WHERE
 	</parameter>
 	<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
 	<parameter name="SITUACAO" class="java.util.Collection" nestedType="java.lang.String"/>
+	<parameter name="ORGANIZACAO_SERVICO_ID" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT pes.nr_ordem,
 	pes.nr_antiguidade,
@@ -427,7 +430,8 @@ WHERE
 	pes.sg_situacao
 FROM vw_pessoas_todas pes
 WHERE
-      pes.cd_om =  $P{ORGANIZACAO_ID}   AND
+      (pes.cd_om =  $P{ORGANIZACAO_ID} or
+      pes.CD_OM_SVC = $P{ORGANIZACAO_SERVICO_ID})   AND
       pes.ttc = $P{TIPO_EFETIVO} AND
       $X{IN, PES.SG_SITUACAO , SITUACAO}
 ORDER BY CASE
@@ -837,8 +841,8 @@ ORDER BY CASE
 			</textField>
 			<subreport>
 				<reportElement style="estilo_corpo" stretchType="ContainerHeight" x="612" y="0" width="190" height="30" uuid="d79dad69-1056-4201-910e-275f1c77d7a5"/>
-				<subreportParameter name="ORGANIZACAO_ID">
-					<subreportParameterExpression><![CDATA[$F{cd_om}]]></subreportParameterExpression>
+				<subreportParameter name="ORGANIZACAO_SERVICO_ID">
+					<subreportParameterExpression><![CDATA[$F{cd_om_svc}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="NR_ORDEM">
 					<subreportParameterExpression><![CDATA[$F{nr_ordem}]]></subreportParameterExpression>

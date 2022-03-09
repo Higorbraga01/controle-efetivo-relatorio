@@ -30,7 +30,7 @@
 		</conditionalStyle>
 	</style>
 	<parameter name="NR_ORDEM" class="java.lang.String"/>
-	<parameter name="ORGANIZACAO_ID" class="java.lang.String">
+	<parameter name="ORGANIZACAO_SERVICO_ID" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
@@ -50,7 +50,7 @@ FROM t_local_trabalho_pessoa tltp
 	 AND tltp.cd_local_trabalho = tlto.cd_local_trabalho 
 WHERE 
 	 tltp.nr_ordem = $P{NR_ORDEM} 
-	 AND tltp.cd_org =  $P{ORGANIZACAO_ID} 
+	 AND tltp.cd_org =  $P{ORGANIZACAO_SERVICO_ID} 
 	 AND tltp.dt_termino IS NULL]]>
 	</queryString>
 	<field name="codigolocaltrabalho" class="java.lang.String">
@@ -119,7 +119,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{organizacaosigla} ]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{organizacaosigla}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="ContainerHeight" x="103" y="0" width="87" height="30" uuid="dfc4d51e-090c-4429-be49-943aeaa82122"/>
