@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="setor-sub-report" pageWidth="190" pageHeight="44" orientation="Landscape" columnWidth="190" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d8f6a488-9d57-4c5b-b056-dc2ba85752b2">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="controle-efetivo"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NO_DATA_ADAPTER"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -37,6 +37,7 @@
 		<![CDATA[SELECT tltp.cd_local_trabalho AS codigoLocalTrabalho,
 	tltp.nr_ordem AS pessoaId,
 	tltp.cd_org AS organizacaoId,
+	tcfr.NM_FNCO_RLV as funcao,
 	tltp.sg_local_org AS organizacaoSigla,
 	tlto.ds_local_trab_org AS nomeLocalTrabalho,
 	tlto.sg_local_org_e_subordinada AS siglaLocalSubornidada,
@@ -46,12 +47,14 @@
 FROM t_local_trabalho_pessoa tltp
 	left join t_local_trabalho_organizacao tlto ON 
 	 tltp.cd_org = tlto.cd_org 
+	 left join t_cargo_funcao_relevante tcfr on  tltp.cd_fnco_rlv = tcfr.cd_fnco_rlv
 	 AND tltp.sg_local_org = tlto.sg_local_org 
 	 AND tltp.cd_local_trabalho = tlto.cd_local_trabalho 
 WHERE 
 	 tltp.nr_ordem = $P{NR_ORDEM} 
 	 AND tltp.cd_org =  $P{ORGANIZACAO_SERVICO_ID} 
-	 AND tltp.dt_termino IS NULL]]>
+	 AND tltp.dt_termino IS NULL 
+	 and tcfr.SG_FNCO_RLV is not null]]>
 	</queryString>
 	<field name="codigolocaltrabalho" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codigolocaltrabalho"/>
@@ -98,6 +101,7 @@ WHERE
 		<property name="com.jaspersoft.studio.field.label" value="situacao"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="t_local_trabalho_organizacao"/>
 	</field>
+	<field name="funcao" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -133,7 +137,7 @@ WHERE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{siglalocalsubornidada} != null ? $F{siglalocalsubornidada} : "N/A"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{funcao} != null ? $F{funcao} : "N/A"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

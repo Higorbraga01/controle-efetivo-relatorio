@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl"><name>SIGPES-HOMOLOG</name><driver>oracle.jdbc.driver.OracleDriver</driver><username>EACADEMICO</username><password>123</password><savePassword>true</savePassword><url>jdbc:oracle:thin:@10.52.202.233:1521:homolog</url><database></database><serverAddress></serverAddress><classpath>/home/leticiasoares/projects/sigpes-api/ojdbc7.jar</classpath></jdbcDataAdapter>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+  <name>SIGPES-HOMOLOG</name>
+  <classpath>/home/higor/IdeaProjects/controle-efetivo-api-git-lab/ojdbc7.jar</classpath>
+  <driver>oracle.jdbc.driver.OracleDriver</driver>
+  <username>EACADEMICO</username>
+  <password>123</password>
+  <url>jdbc:oracle:thin:@exacc02hmlg-scan.ccarj.intraer:1521/ssighomolog.ccarj.intraer</url>
+  <database></database>
+  <savePassword>true</savePassword>
+  <serverAddress></serverAddress>
+  <readOnly>true</readOnly>
+</jdbcDataAdapter>

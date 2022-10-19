@@ -230,11 +230,10 @@
 			<![CDATA[select p.sg_posto, p.sg_quadro, p.sg_especialidade, count(p.sg_posto) as quantidade
 from vw_pessoas_todas p
 where
-
-      p.cd_om =  $P{ORGANIZACAO_ID}  and
-      p.ttc = $P{TIPO_EFETIVO}   and
-     Regexp_Like (p.sg_quadro, 'QO|QCO') and
-     $X{IN, p.SG_SITUACAO, param }
+      p.cd_om =  $P{ORGANIZACAO_ID}  AND (
+      (p.sg_situacao= 'ATIVO' AND p.ttc='-')OR
+      (p.sg_situacao= 'INAT' AND p.ttc='TTC')) and
+     Regexp_Like (p.sg_quadro, 'QO|QCO') 
 group by p.sg_posto, p.sg_quadro, p.sg_especialidade, p.nr_posto
 order by p.nr_posto]]>
 		</queryString>
@@ -279,10 +278,12 @@ order by p.nr_posto]]>
 	count( p.sg_posto) AS quantidade
 FROM vw_pessoas_todas p
 where
-  p.cd_om =   $P{ORGANIZACAO_ID} 
-  and p.ttc =  $P{TIPO_EFETIVO}  AND
-p.sg_quadro IN ('QSS','QESA','QSCON','QTA') and
-     $X{IN, p.SG_SITUACAO, param }
+  p.cd_om = $P{ORGANIZACAO_ID} 
+  AND (
+      (p.sg_situacao= 'ATIVO' AND p.ttc='-')OR
+      (p.sg_situacao= 'INAT' AND p.ttc='TTC')
+      ) and
+p.sg_quadro IN ('QSS','QESA','QSCON','QTA') 
 GROUP BY p.sg_posto,
 	p.sg_quadro,
 	p.sg_especialidade,
@@ -331,9 +332,11 @@ ORDER BY p.nr_posto ASC]]>
 FROM vw_pessoas_todas p
 WHERE 
    p.cd_om =  $P{ORGANIZACAO_ID} 
-  and p.ttc = $P{TIPO_EFETIVO} and
- 	 p.sg_quadro IN ('QCB','QSD') and
-     $X{IN, p.SG_SITUACAO, param }
+  AND (
+      (p.sg_situacao= 'ATIVO' AND p.ttc='-') OR
+      (p.sg_situacao= 'INAT' AND p.ttc='TTC')
+      ) and
+ 	 p.sg_quadro IN ('QCB','QSD')
 GROUP BY p.sg_posto,
 	p.sg_quadro,
 	p.sg_especialidade,
@@ -379,9 +382,8 @@ ORDER BY p.nr_posto ASC]]>
 count(p.NR_ORDEM) AS quantidade
 FROM vw_pessoas_todas p
 WHERE 
-	 p.sg_situacao = 'CVL' 
-	 AND p.cd_om = $P{ORGANIZACAO_ID} 
-	 AND p.ttc = $P{TIPO_EFETIVO}]]>
+	 p.cd_om = $P{ORGANIZACAO_ID} 
+	 AND p.sg_situacao='CVL' AND p.ttc='-']]>
 		</queryString>
 		<field name="quantidade" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.name" value="quantidade"/>
@@ -397,7 +399,7 @@ WHERE
 	<parameter name="SUB_REPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="TIPO_EFETIVO" class="java.lang.String"/>
+	<parameter name="TIPO_EFETIVO" class="java.util.Collection" nestedType="java.lang.String"/>
 	<parameter name="SITUACAO" class="java.util.Collection" nestedType="java.lang.String"/>
 	<parameter name="ORGANIZACAO_SERVICO_ID" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
@@ -431,13 +433,11 @@ WHERE
 FROM vw_pessoas_todas pes
 WHERE
       (pes.cd_om =  $P{ORGANIZACAO_ID} or
-      pes.CD_OM_SVC = $P{ORGANIZACAO_SERVICO_ID})   AND
-      pes.ttc = $P{TIPO_EFETIVO} AND
-      $X{IN, PES.SG_SITUACAO , SITUACAO}
-ORDER BY CASE
-             WHEN $P{TIPO_EFETIVO}  = 'TTC'
-                 THEN (nr_posto)
-             ELSE (nr_antiguidade) END ASC]]>
+      pes.CD_OM_SVC = $P{ORGANIZACAO_SERVICO_ID})   AND (
+      (pes.sg_situacao= 'ATIVO' AND pes.ttc='-')OR
+      (pes.sg_situacao= 'INAT' AND pes.ttc='TTC') OR
+      (pes.sg_situacao= 'CVL' AND pes.ttc='-'))
+      ORDER BY pes.nr_posto,pes.nr_antiguidade,pes.dt_promocao_atual]]>
 	</queryString>
 	<field name="nr_ordem" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="nr_ordem"/>
@@ -580,7 +580,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="18" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["RELAÇÃO DO EFETIVO "+ ($F{ttc}.equals("TTC")? "TTC ":  ($P{SITUACAO}.contains( "ATIVO" ) ? "ATIVO ": "CIVIL "  ) )+$F{sg_om}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RELAÇÃO DO EFETIVO "+ $F{sg_om}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -723,7 +723,7 @@ ORDER BY CASE
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SUBORDINAÇÃO]]></text>
+				<text><![CDATA[FUNCAO]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
